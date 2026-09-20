@@ -110,15 +110,14 @@ E nesse caso, nos proximos passos voce deve rodar o Spring Boot com o profile do
 Para executar o projeto, é necessário ter instalado:
 
 * Java 25
-* Maven
 * PostgreSQL
 
 Verifique a versão instalada:
 
 ```bash
 java -version
-mvn -version
 ```
+> **Observação:** Não é necessário ter o maven instalado, o projeto já disponibiliza um wrapper.
 
 ## ▶️ Como executar
 
