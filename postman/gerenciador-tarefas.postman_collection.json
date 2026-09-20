@@ -1,0 +1,633 @@
+{
+  "info": {
+    "_postman_id": "7c4d6f0e-2f0d-4d8e-9d21-6b2e3b0a8f41",
+    "name": "Gerenciador de Tarefas - API",
+    "description": "Coleção para validação da API REST do desafio Gerenciador de Tarefas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "projetoId",
+      "value": ""
+    },
+    {
+      "key": "responsavelId",
+      "value": ""
+    },
+    {
+      "key": "tarefaId",
+      "value": ""
+    },
+    {
+      "key": "tarefaIdExclusao",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Projetos",
+      "item": [
+        {
+          "name": "Criar projeto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projetos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projetos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Sistema de Gestão\",\n  \"descricao\": \"Projeto para desenvolvimento e gerenciamento de tarefas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Resposta possui id', function () { pm.expect(json.id).to.exist; });",
+                  "pm.collectionVariables.set('projetoId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar projetos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projetos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projetos"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Resposta é uma lista', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Responsáveis",
+      "item": [
+        {
+          "name": "Criar responsável",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/responsaveis",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "responsaveis"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao.silva@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Resposta possui id', function () { pm.expect(json.id).to.exist; });",
+                  "pm.collectionVariables.set('responsavelId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar responsáveis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/responsaveis",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "responsaveis"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Resposta é uma lista', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Tarefas",
+      "item": [
+        {
+          "name": "Criar tarefa - ALTA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Criar entidade Tarefa\",\n  \"descricao\": \"Implementar a entidade Tarefa com JPA\",\n  \"prioridade\": \"ALTA\",\n  \"prazo\": \"2026-09-30\",\n  \"projeto\": {\n    \"id\": \"{{projetoId}}\"\n  },\n  \"responsavel\": {\n    \"id\": \"{{responsavelId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Status inicial = NOVA', function () { pm.expect(json.status).to.eql('NOVA'); });",
+                  "pm.test('criadaEm foi preenchida', function () { pm.expect(json.criadaEm).to.exist; });",
+                  "pm.test('Location foi retornado', function () { pm.expect(pm.response.headers.get('Location')).to.exist; });",
+                  "pm.collectionVariables.set('tarefaId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar tarefa - MEDIA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Criar controller\",\n  \"descricao\": \"Implementar os endpoints REST\",\n  \"prioridade\": \"MEDIA\",\n  \"prazo\": \"2026-10-05\",\n  \"projeto\": {\n    \"id\": \"{{projetoId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Status inicial = NOVA', function () { pm.expect(json.status).to.eql('NOVA'); });",
+                  "pm.collectionVariables.set('tarefaIdExclusao', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar tarefa - BAIXA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Configurar banco\",\n  \"descricao\": \"Configurar conexão com PostgreSQL\",\n  \"prioridade\": \"BAIXA\",\n  \"prazo\": \"2026-09-25\",\n  \"projeto\": {\n    \"id\": \"{{projetoId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Status inicial = NOVA', function () { pm.expect(json.status).to.eql('NOVA'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar tarefas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Resposta é uma lista', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtrar por status - NOVA",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas?status=NOVA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas?status=NOVA"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Todas as tarefas retornadas possuem status NOVA', function () { json.forEach(t => pm.expect(t.status).to.eql('NOVA')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtrar por projeto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas?projetoId={{projetoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas?projetoId={{projetoId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Resposta é uma lista', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar tarefa por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas/{{tarefaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas",
+                "{{tarefaId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('ID corresponde ao solicitado', function () { pm.expect(String(json.id)).to.eql(String(pm.collectionVariables.get('tarefaId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar tarefa - CONCLUIDA",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas/{{tarefaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas",
+                "{{tarefaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Criar entidade Tarefa\",\n  \"descricao\": \"Entidade implementada e funcionando\",\n  \"status\": \"CONCLUIDA\",\n  \"prioridade\": \"ALTA\",\n  \"prazo\": \"2026-09-30\",\n  \"projeto\": {\n    \"id\": \"{{projetoId}}\"\n  },\n  \"responsavel\": {\n    \"id\": \"{{responsavelId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Status = CONCLUIDA', function () { pm.expect(json.status).to.eql('CONCLUIDA'); });",
+                  "pm.test('concluidaEm foi preenchida', function () { pm.expect(json.concluidaEm).to.exist; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtrar por status - CONCLUIDA",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas?status=CONCLUIDA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas?status=CONCLUIDA"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Todas as tarefas retornadas possuem status CONCLUIDA', function () { json.forEach(t => pm.expect(t.status).to.eql('CONCLUIDA')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remover tarefa",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas/{{tarefaIdExclusao}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas",
+                "{{tarefaIdExclusao}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar tarefa removida - 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas/{{tarefaIdExclusao}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas",
+                "{{tarefaIdExclusao}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Resposta de erro possui mensagem', function () { pm.expect(json.erro || json.message).to.exist; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar tarefa inexistente - 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tarefas/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tarefas",
+                "999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status HTTP = 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Resposta de erro possui mensagem', function () { pm.expect(json.erro || json.message).to.exist; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
